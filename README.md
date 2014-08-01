@@ -1,14 +1,14 @@
 Textplay
 ========
 
-Textplay is a simple ruby-script (one file, no dependancies) that converts screenplays written in [Fountain][fountain] formatted plain-text to a variety of useful formats: HTML, FDX ([Final Draft][finaldraft]), or PDF ([PrinceXML][prince] required).
+Textplay is a simple command-line script that converts screenplays written in [Fountain][fountain] formatted plain-text to a variety of useful formats: HTML, FDX ([Final Draft][finaldraft]), or PDF ([PrinceXML][prince] required).
 
 Textplay has been rigorously tested against fountain documents, but it is not perfect, if you encounter a problem please [open a github issue][ghiss].
 
 ## Installation
 
 1. I recommend cloning this repository somewhere convenient, then creating a symbolic link to `textplay` in `/usr/local/bin/`
-2. `gem install textplay`
+2. `gem install textplay` (gem may not always be up-to-date)
 
 Textplay was built using Mac OS 10.6-9 and Ruby 1.8-2.0. I have only tested it in this environment, if you want to run Textplay in another environment (such as Windows) you may have to modify the code.
 

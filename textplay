@@ -308,7 +308,7 @@ single_key = /
   # Cannot begin with spaces (that's a value)
   ^(?!\ )
   # the key
-  ([\S\ ]+):\ 
+  ([\S\ ]+):\ *
   # the value
   ([^\n]+)\n
   # a single empty line is allowed - 2 empty lines ends the meta_block
@@ -594,7 +594,8 @@ p {
 margin-top:12pt;
 margin-bottom:12pt;
 margin-left:0;
-width:auto;
+padding-right:.25in;
+width:6in;
 white-space: #{wrap_paragraphs};
 }
 
@@ -604,6 +605,7 @@ dt {
 font-weight:normal;
 margin-top:1em;
 margin-left:2in;
+padding-right:.25in;
 width:4in;
 }
 
@@ -613,6 +615,7 @@ dd.parenthetical {
 margin-left:1.6in;
 text-indent:-.12in;
 width: 2in;
+padding-right:2.66in;
 }
 
 /*Dialogue*/
@@ -621,20 +624,27 @@ dd {
 margin:0;
 margin-left: 1in;
 width: 3.5in;
+padding-right:1.75in;
 line-height: inherit;
 white-space: pre-wrap;
 }
 
 /* Dual-Dialogue-blocks */
 
-dl {clear:both;}
+div.dialogue_wrapper {
+overflow:auto;
+width:100%;
+}
 
 dl.dual {
 width:2.9in;
-clear:none;
 }
 
-dl.dual dt, dl.dual dd { margin-left:0; width:100%;}
+dl.dual dt, dl.dual dd {
+margin-left:0;
+width:2.5in;
+padding-right:.25in;
+}
 
 dl.dual.first {
 float:left;
@@ -672,6 +682,7 @@ font-weight: normal;
 font-size: 12pt;
 margin-top: 1em;
 margin-bottom: 1em;
+padding-right:.25in;
 text-transform:uppercase;
 }
 
@@ -714,6 +725,10 @@ text-decoration:underline;
 .comment {
 display:none
 }
+
+.revised {border-right:.5em solid #aaa;}
+
+
 </style>
 </head>
 <body>
@@ -876,9 +891,11 @@ text = text.gsub(/(<talk>)~(.+)(<\/talk>)/, '\1<lyric>\2</lyric>\3')
 # mark dual-dialogue blocks with a <join-marker>
 text = text.gsub(/^\n(<dialogue>\n<character>.+?)( +\^)(<\/character>)/, '<join-marker>' + "\n" + '\1\3')
 
-# remove the <join-marker> and add "class" to <dialogue> tag
-text = text.gsub(/\n\n<dialogue>\n((?:.+\n)+)<join-marker>\n<dialogue>/, "\n\n" + '<dialogue class="dual first">' + "\n" + '\1' + "\n" + '<dialogue class="dual second">')
+# wrap dual dialogue in wrapper
+text = text.gsub(/\n\n(<dialogue>\n(?:(?:.+\n)+))(<join-marker>)((?:\n.+)+)/, "\n\n" + '<wrap>' + "\n" + '\1\2\3' "\n" + '</wrap>')
 
+# remove the <join-marker> and add "class" to <dialogue> tag
+text = text.gsub(/(?<=<wrap>\n)<dialogue>\n((?:.+\n)+)<join-marker>\n<dialogue>/, '<dialogue class="dual first">' + "\n" + '\1' + '<dialogue class="dual second">')
 
 
 # ------- Scene Headings
@@ -892,7 +909,7 @@ text = text.gsub(/
 # Standard prefixes, allowing for bold-italic
 ((?:[\*\_])*(i\.?\/e|int\.?\/ext|ext|int|est)
 # A separator between prefix and location
-(\ +|.\ ?).*) \n
+(\ +|\.\ ?).*) \n
 # Require trailing empty line
 ^[\ \t]* \n
 /xi, "\n"+'<sceneheading>\1</sceneheading>'+"\n\n")
@@ -984,6 +1001,8 @@ else
   text = text.gsub(/<\/slug>/, '</h5>')
   text = text.gsub(/<center>/, '<p class="center">')
   text = text.gsub(/<\/center>/, '</p>')
+  text = text.gsub(/<wrap>/, '<div class="dialogue_wrapper">')
+  text = text.gsub(/<\/wrap>/, '</div>')
   text = text.gsub(/<dialogue( class="dual (first|second)")?>/,'<dl\1>')
   text = text.gsub(/<\/dialogue>/,'</dl>')
   text = text.gsub(/<character>/, '<dt class="character">')
@@ -997,8 +1016,6 @@ else
   text = text.gsub(/<action>/, '<p class="action">')
   text = text.gsub(/<\/action>/, '</p>')
 end
-
-
 
 
 # NOTE: PHASE 6 - Output
